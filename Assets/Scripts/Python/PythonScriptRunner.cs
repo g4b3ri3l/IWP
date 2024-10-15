@@ -26,8 +26,7 @@ public class PythonConsole : MonoBehaviour
         pythonEngine = Python.CreateEngine();
         pythonScope = pythonEngine.CreateScope();
 
-        // Preload game objects or functions into Python scope if necessary
-        pythonScope.SetVariable("game", this);
+        // Preload game objects or functions into Python scope
         pythonScope.SetVariable("player", playerObject);
         pythonScope.SetVariable("move_player", (Action<Vector3>)MovePlayer);
 
@@ -55,25 +54,35 @@ public class PythonConsole : MonoBehaviour
     {
         string pythonCode = inputField.text;
 
+        // Sanitize input by removing problematic characters like vertical tabs (\v) and other control characters
+        pythonCode = pythonCode.Replace("\v", ""); // Remove vertical tabs
+        pythonCode = pythonCode.Replace("\r\n", "\n"); // Normalize line endings (Windows style to Unix style)
+        pythonCode = pythonCode.Replace("\r", "\n"); // Normalize other line endings
+
         try
         {
             // Clear previous output
             outputText.text = "";
 
-            // Clear the stream before capturing new output
-            outputStream.SetLength(0);
-
-            // Execute the code
-            pythonEngine.Execute(pythonCode, pythonScope);
-
-            // Read output from the memory stream
-            outputStream.Seek(0, SeekOrigin.Begin);
-            using (var reader = new StreamReader(outputStream, System.Text.Encoding.UTF8))
+            // Setup a new memory stream for capturing print() output each time the script is run
+            using (var outputStream = new MemoryStream())
+            using (var streamWriter = new StreamWriter(outputStream))
             {
-                string printedOutput = reader.ReadToEnd();
-                if (!string.IsNullOrEmpty(printedOutput))
+                streamWriter.AutoFlush = true;
+                pythonEngine.Runtime.IO.SetOutput(outputStream, streamWriter);
+
+                // Execute the code
+                pythonEngine.Execute(pythonCode, pythonScope);
+
+                // Read output from the memory stream
+                outputStream.Seek(0, SeekOrigin.Begin);
+                using (var reader = new StreamReader(outputStream, System.Text.Encoding.UTF8))
                 {
-                    outputText.text = printedOutput;
+                    string printedOutput = reader.ReadToEnd();
+                    if (!string.IsNullOrEmpty(printedOutput))
+                    {
+                        outputText.text = printedOutput;
+                    }
                 }
             }
         }
@@ -82,5 +91,13 @@ public class PythonConsole : MonoBehaviour
             // Catch and display any errors from Python execution
             outputText.text = "Error: " + ex.Message;
         }
+    
+    }   
+
+    private void OnDestroy()
+    {
+        // Properly clean up the streams when the object is destroyed
+        streamWriter?.Dispose();
+        outputStream?.Dispose();
     }
 }

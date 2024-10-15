@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : Singleton<PlayerController>
 {
     [SerializeField] private float movementSpeed = 1.0f;
 
@@ -13,8 +13,10 @@ public class PlayerController : MonoBehaviour
     private bool interacted;
     private Rigidbody2D rb;
 
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
+
         playerControls = new PlayerControls();
         rb = GetComponent<Rigidbody2D>();
         playerControls.Interaction.Interact.performed += OnInteract;
@@ -23,11 +25,6 @@ public class PlayerController : MonoBehaviour
     private void OnEnable()
     {
         playerControls.Enable();
-    }
-
-    private void OnDisable()
-    {
-        playerControls.Disable();
     }
 
     private void Update()
