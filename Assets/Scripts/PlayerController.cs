@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,12 +10,14 @@ public class PlayerController : MonoBehaviour
 
     private PlayerControls playerControls;
     private Vector2 movement;
+    private bool interacted;
     private Rigidbody2D rb;
 
     private void Awake()
     {
         playerControls = new PlayerControls();
         rb = GetComponent<Rigidbody2D>();
+        playerControls.Interaction.Interact.performed += OnInteract;
     }
 
     private void OnEnable()
@@ -22,9 +25,15 @@ public class PlayerController : MonoBehaviour
         playerControls.Enable();
     }
 
+    private void OnDisable()
+    {
+        playerControls.Disable();
+    }
+
     private void Update()
     {
         PlayerInput();
+
     }
 
     private void FixedUpdate()
@@ -40,5 +49,11 @@ public class PlayerController : MonoBehaviour
     private void Move()
     {
         rb.MovePosition(rb.position + movement * (movementSpeed * Time.fixedDeltaTime));
+    }
+
+    private void OnInteract(InputAction.CallbackContext context)
+    {
+        Debug.Log("Player Interacted");
+        // Add your interaction logic here
     }
 }

@@ -94,6 +94,34 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 }
             ]
+        },
+        {
+            ""name"": ""Interaction"",
+            ""id"": ""83d01494-161c-4282-a40e-881ff6465ec3"",
+            ""actions"": [
+                {
+                    ""name"": ""Interact"",
+                    ""type"": ""Button"",
+                    ""id"": ""508602b3-abc3-4c71-ad5e-6c8f2a2bd895"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Press(behavior=1)"",
+                    ""initialStateCheck"": true
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""1640ed4b-3d1e-480c-8e94-a8c7bed728ef"",
+                    ""path"": ""<Keyboard>/z"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -101,6 +129,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         // Movement
         m_Movement = asset.FindActionMap("Movement", throwIfNotFound: true);
         m_Movement_Move = m_Movement.FindAction("Move", throwIfNotFound: true);
+        // Interaction
+        m_Interaction = asset.FindActionMap("Interaction", throwIfNotFound: true);
+        m_Interaction_Interact = m_Interaction.FindAction("Interact", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -204,8 +235,58 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         }
     }
     public MovementActions @Movement => new MovementActions(this);
+
+    // Interaction
+    private readonly InputActionMap m_Interaction;
+    private List<IInteractionActions> m_InteractionActionsCallbackInterfaces = new List<IInteractionActions>();
+    private readonly InputAction m_Interaction_Interact;
+    public struct InteractionActions
+    {
+        private @PlayerControls m_Wrapper;
+        public InteractionActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Interact => m_Wrapper.m_Interaction_Interact;
+        public InputActionMap Get() { return m_Wrapper.m_Interaction; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(InteractionActions set) { return set.Get(); }
+        public void AddCallbacks(IInteractionActions instance)
+        {
+            if (instance == null || m_Wrapper.m_InteractionActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_InteractionActionsCallbackInterfaces.Add(instance);
+            @Interact.started += instance.OnInteract;
+            @Interact.performed += instance.OnInteract;
+            @Interact.canceled += instance.OnInteract;
+        }
+
+        private void UnregisterCallbacks(IInteractionActions instance)
+        {
+            @Interact.started -= instance.OnInteract;
+            @Interact.performed -= instance.OnInteract;
+            @Interact.canceled -= instance.OnInteract;
+        }
+
+        public void RemoveCallbacks(IInteractionActions instance)
+        {
+            if (m_Wrapper.m_InteractionActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IInteractionActions instance)
+        {
+            foreach (var item in m_Wrapper.m_InteractionActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_InteractionActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public InteractionActions @Interaction => new InteractionActions(this);
     public interface IMovementActions
     {
         void OnMove(InputAction.CallbackContext context);
+    }
+    public interface IInteractionActions
+    {
+        void OnInteract(InputAction.CallbackContext context);
     }
 }
