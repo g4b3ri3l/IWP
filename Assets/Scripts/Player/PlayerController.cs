@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,6 +13,13 @@ public class PlayerController : Singleton<PlayerController>
     private Vector2 movement;
     private bool interacted;
     private Rigidbody2D rb;
+    private Collider2D currentInteractable;
+
+
+    [SerializeField] private LayerMask interactableLayer;
+
+    [SerializeField] public float interactionCooldown = 0.2f;
+    private float lastInteractionTime;
 
     protected override void Awake()
     {
@@ -27,7 +35,7 @@ public class PlayerController : Singleton<PlayerController>
         playerControls.Enable();
     }
 
-    private void Update()
+    public void HandleUpdate()
     {
         PlayerInput();
 
@@ -48,9 +56,51 @@ public class PlayerController : Singleton<PlayerController>
         rb.MovePosition(rb.position + movement * (movementSpeed * Time.fixedDeltaTime));
     }
 
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        // Check if the object is in the interactable layer
+        if ((interactableLayer.value & (1 << other.gameObject.layer)) > 0)
+        {
+            currentInteractable = other;
+            Debug.Log("Interactable Object Nearby");
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        // Clear interactable if player leaves the collider
+        if (other == currentInteractable)
+        {
+            currentInteractable = null;
+            Debug.Log("Left Interactable Range");
+        }
+    }
+
     private void OnInteract(InputAction.CallbackContext context)
     {
-        Debug.Log("Player Interacted");
-        // Add your interaction logic here
+
+        // Check if enough time has passed since the last interaction
+        if (Time.time - lastInteractionTime < interactionCooldown) return;
+
+        if (GameController.Instance.state == GameState.FreeRoam)
+        {
+            Debug.Log("Player Interacted");
+
+            if (currentInteractable != null)
+            {
+                Debug.Log("Player interacted with " + currentInteractable.name);
+
+                // Trigger dialogue or interaction behavior
+                var interactable = currentInteractable.GetComponent<Interactable>();
+                if (interactable != null)
+                {
+                    interactable.Interact();
+                }
+            }
+
+            lastInteractionTime = Time.time;
+        }
     }
+
+
 }
