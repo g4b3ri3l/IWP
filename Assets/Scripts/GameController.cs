@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 
 public enum GameState { FreeRoam, Dialogue, Console, Cutscene }
@@ -75,6 +76,8 @@ public class GameController : Singleton<GameController>
             state = GameState.Console;
             consoleUI.SetActive(true);
             pythonConsole.inputField.ActivateInputField();
+            EventSystem.current.SetSelectedGameObject(pythonConsole.inputField.gameObject);  // Only set this when console is activated
+
         }
 
         // Disable player movement while in the console
