@@ -5,6 +5,7 @@ using Microsoft.Scripting.Hosting;
 using TMPro;
 using System;
 using System.IO;
+using IronPython.Modules;
 
 public class PythonConsole : MonoBehaviour
 {
@@ -39,8 +40,14 @@ public class PythonConsole : MonoBehaviour
         // Ensure inputField can take multi-line input
         inputField.lineType = TMP_InputField.LineType.MultiLineNewline;
 
-        // Assign the Run Script button to trigger the code execution
-        runButton.onClick.AddListener(ExecutePythonCode);
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            ExecutePythonCode();
+        }
     }
 
     // Method to move player to a new position using Python

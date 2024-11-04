@@ -8,6 +8,8 @@ using UnityEngine.InputSystem;
 public class PlayerController : Singleton<PlayerController>
 {
     [SerializeField] private float movementSpeed = 1.0f;
+    public bool AllowMovement { get; set; } = true;
+
 
     private PlayerControls playerControls;
     private Vector2 movement;
@@ -37,12 +39,16 @@ public class PlayerController : Singleton<PlayerController>
 
     public void HandleUpdate()
     {
+        if (!AllowMovement) return;
+
         PlayerInput();
 
     }
 
     private void FixedUpdate()
     {
+        if (!AllowMovement) return;
+
         Move();
     }
 
