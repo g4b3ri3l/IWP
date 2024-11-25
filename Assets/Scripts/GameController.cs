@@ -30,6 +30,8 @@ public class GameController : Singleton<GameController>
 
         consoleUI.SetActive(false);
 
+        state = GameState.Cutscene;
+
     }
 
     private IEnumerator ReturnToFreeRoamAfterDelay()
@@ -50,12 +52,20 @@ public class GameController : Singleton<GameController>
         switch (state)
         {
             case GameState.FreeRoam:
+                playerController.animator.enabled = true;
                 playerController.HandleUpdate();
                 break;
             case GameState.Dialogue:
+                playerController.animator.enabled = false;
                 DialogueManager.Instance.HandleUpdate();
                 break;
             case GameState.Console:
+                playerController.animator.enabled = false;
+                pythonConsole.inputField.ActivateInputField();
+                EventSystem.current.SetSelectedGameObject(pythonConsole.inputField.gameObject);
+                break;
+            case GameState.Cutscene:
+                CutsceneManager.Instance.HandleUpdate();
                 break;
             default:
                 break;
@@ -76,7 +86,7 @@ public class GameController : Singleton<GameController>
             state = GameState.Console;
             consoleUI.SetActive(true);
             pythonConsole.inputField.ActivateInputField();
-            EventSystem.current.SetSelectedGameObject(pythonConsole.inputField.gameObject);  // Only set this when console is activated
+            EventSystem.current.SetSelectedGameObject(pythonConsole.inputField.gameObject);  
 
         }
 

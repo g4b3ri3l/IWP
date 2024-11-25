@@ -7,21 +7,41 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : Singleton<PlayerController>
 {
+    #region Enums
+    private enum Directions { UP, DOWN, LEFT, RIGHT }
+
+    #endregion
+
+    #region Editor Data
+
+    [Header("Movement Attributes")]
     [SerializeField] private float movementSpeed = 1.0f;
     public bool AllowMovement { get; set; } = true;
 
-
+    [Header("Dependencies")]
     private PlayerControls playerControls;
     private Vector2 movement;
     private bool interacted;
     private Rigidbody2D rb;
     private Collider2D currentInteractable;
-
+    public Animator animator;
+    private SpriteRenderer spriteRenderer;
 
     [SerializeField] private LayerMask interactableLayer;
 
+    #endregion
+
+    #region Internal Data
     [SerializeField] public float interactionCooldown = 0.2f;
     private float lastInteractionTime;
+    
+    private Directions _facingDirection = Directions.UP;
+    private readonly int _animMoveRight = Animator.StringToHash("Anim_Player_Move_Right");
+    private readonly int _animIdleFront = Animator.StringToHash("Anim_Player_Idle_Front");
+    private readonly int _animMoveBack = Animator.StringToHash("Anim_Player_Move_Up");
+
+    #endregion
+
 
     protected override void Awake()
     {
@@ -29,6 +49,9 @@ public class PlayerController : Singleton<PlayerController>
 
         playerControls = new PlayerControls();
         rb = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+
         playerControls.Interaction.Interact.performed += OnInteract;
     }
 
@@ -37,11 +60,15 @@ public class PlayerController : Singleton<PlayerController>
         playerControls.Enable();
     }
 
+    #region Tick
     public void HandleUpdate()
     {
         if (!AllowMovement) return;
 
         PlayerInput();
+        CalculateFacingDirection();
+        
+        UpdateAnimation();
 
     }
 
@@ -52,15 +79,96 @@ public class PlayerController : Singleton<PlayerController>
         Move();
     }
 
+    #endregion
+
+
+    #region Input Logic
     private void PlayerInput()
     {
         movement = playerControls.Movement.Move.ReadValue<Vector2>();
+
     }
 
+    #endregion
+
+    #region Movement Logic
     private void Move()
     {
         rb.MovePosition(rb.position + movement * (movementSpeed * Time.fixedDeltaTime));
     }
+
+    #endregion
+
+    #region Animation Logic
+
+    private void CalculateFacingDirection()
+    {
+        if (movement.x != 0)
+        {
+            if (movement.x > 0) // Moving Right
+            {
+                _facingDirection = Directions.RIGHT;
+            }
+            else if (movement.x < 0) // Moving Left
+            {
+                _facingDirection = Directions.LEFT;
+            }
+        }
+        else if (movement.y != 0)
+        {
+            if (movement.y > 0) // Moving Up
+            {
+                _facingDirection = Directions.UP;
+            }
+            else if (movement.y < 0) // Moving Down
+            {
+                _facingDirection = Directions.DOWN;
+            }
+        }
+
+        Debug.Log(_facingDirection);
+    }
+
+    private void UpdateAnimation()
+    {
+        // Sprite flipping for left/right
+        if (_facingDirection == Directions.LEFT)
+        {
+            spriteRenderer.flipX = true;
+        }
+        else if (_facingDirection == Directions.RIGHT)
+        {
+            spriteRenderer.flipX = false;
+        }
+
+        // Animation selection based on movement and facing direction
+        if (movement != Vector2.zero)
+        {
+            switch (_facingDirection)
+            {
+                case Directions.UP:
+                    animator.CrossFade(_animMoveBack, 0);
+                    break;
+                case Directions.RIGHT:
+                    animator.CrossFade(_animMoveRight, 0);
+                    break;
+                case Directions.LEFT:
+                    animator.CrossFade(_animMoveRight, 0);
+                    break;
+                default:
+                    animator.CrossFade(_animIdleFront, 0);
+                    break;
+            }
+        }
+        else
+        {
+            animator.CrossFade(_animIdleFront, 0);
+        }
+    }
+
+    #endregion
+
+
 
     private void OnTriggerEnter2D(Collider2D other)
     {

@@ -44,10 +44,14 @@ public class PythonConsole : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKey(KeyCode.LeftControl))
         {
-            ExecutePythonCode();
+            if (Input.GetKeyUp(KeyCode.R))
+            {
+                ExecutePythonCode();
+            }
         }
+       
     }
 
     // Method to move player to a new position using Python
