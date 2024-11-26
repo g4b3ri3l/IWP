@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Cinemachine;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -29,6 +30,7 @@ public class PlayerController : Singleton<PlayerController>
 
     [SerializeField] private LayerMask interactableLayer;
 
+
     #endregion
 
     #region Internal Data
@@ -39,6 +41,8 @@ public class PlayerController : Singleton<PlayerController>
     private readonly int _animMoveRight = Animator.StringToHash("Anim_Player_Move_Right");
     private readonly int _animIdleFront = Animator.StringToHash("Anim_Player_Idle_Front");
     private readonly int _animMoveBack = Animator.StringToHash("Anim_Player_Move_Up");
+    private readonly int _animMoveDown = Animator.StringToHash("Anim_Player_Move_Down");
+
 
     #endregion
 
@@ -94,7 +98,7 @@ public class PlayerController : Singleton<PlayerController>
     #region Movement Logic
     private void Move()
     {
-        rb.MovePosition(rb.position + movement * (movementSpeed * Time.fixedDeltaTime));
+        rb.MovePosition(rb.position  + movement * (movementSpeed * Time.fixedDeltaTime));
     }
 
     #endregion
@@ -154,6 +158,9 @@ public class PlayerController : Singleton<PlayerController>
                     break;
                 case Directions.LEFT:
                     animator.CrossFade(_animMoveRight, 0);
+                    break;
+                case Directions.DOWN:
+                    animator.CrossFade(_animMoveDown, 0);
                     break;
                 default:
                     animator.CrossFade(_animIdleFront, 0);
