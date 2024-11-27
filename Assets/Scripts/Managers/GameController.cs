@@ -72,7 +72,7 @@ public class GameController : Singleton<GameController>
         }
     }
 
-    private void ToggleConsole()
+    public void ToggleConsole()
     {
         if (state == GameState.Console)
         {
@@ -86,6 +86,8 @@ public class GameController : Singleton<GameController>
             state = GameState.Console;
             consoleUI.SetActive(true);
             pythonConsole.inputField.ActivateInputField();
+
+
             EventSystem.current.SetSelectedGameObject(pythonConsole.inputField.gameObject);  
 
         }
