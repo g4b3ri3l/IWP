@@ -5022,29 +5022,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 742066553603679969, guid: 7998f1488513d6a47a9702d5e9d939b0, type: 3}
-      propertyPath: m_SortingLayer
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 742066553603679969, guid: 7998f1488513d6a47a9702d5e9d939b0, type: 3}
-      propertyPath: m_SortingLayerID
-      value: -448265641
-      objectReference: {fileID: 0}
     - target: {fileID: 5776773711931263416, guid: 7998f1488513d6a47a9702d5e9d939b0, type: 3}
       propertyPath: m_Name
       value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 8104679890886800385, guid: 7998f1488513d6a47a9702d5e9d939b0, type: 3}
-      propertyPath: m_Size.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 8104679890886800385, guid: 7998f1488513d6a47a9702d5e9d939b0, type: 3}
-      propertyPath: m_Size.y
-      value: 0.35
-      objectReference: {fileID: 0}
-    - target: {fileID: 8104679890886800385, guid: 7998f1488513d6a47a9702d5e9d939b0, type: 3}
-      propertyPath: m_Offset.y
-      value: -0.34
       objectReference: {fileID: 0}
     - target: {fileID: 8952178617050610553, guid: 7998f1488513d6a47a9702d5e9d939b0, type: 3}
       propertyPath: m_LocalPosition.x
