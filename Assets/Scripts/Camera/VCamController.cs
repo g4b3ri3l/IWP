@@ -34,58 +34,62 @@ public class VCamController : MonoBehaviour
 
     private void Update()
     {
-        switch (currentCamera)
+        if (GameController.Instance.state == GameState.FreeRoam)
         {
-            case CurrentCamera.MAIN:
-                if (Input.GetKeyDown(KeyCode.E))
-                {
-                    virtualCameraMain.enabled = false;
-                    virtualCameraR.enabled = true;
-                    currentCamera = CurrentCamera.RIGHT;
-                }
-                if (Input.GetKeyDown(KeyCode.Q))
-                {
-                    virtualCameraMain.enabled = false;
-                    virtualCameraL.enabled = true;
-                    currentCamera = CurrentCamera.LEFT;
-                }
+            switch (currentCamera)
+            {
+                case CurrentCamera.MAIN:
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+                        virtualCameraMain.enabled = false;
+                        virtualCameraR.enabled = true;
+                        currentCamera = CurrentCamera.RIGHT;
+                    }
+                    if (Input.GetKeyDown(KeyCode.Q))
+                    {
+                        virtualCameraMain.enabled = false;
+                        virtualCameraL.enabled = true;
+                        currentCamera = CurrentCamera.LEFT;
+                    }
 
-                
-                break;
-            case CurrentCamera.RIGHT:
-  
-                if (Input.GetKeyDown(KeyCode.Q))
-                {
-                    virtualCameraR.enabled = false;
-                    virtualCameraMain.enabled = true;
-                    currentCamera = CurrentCamera.MAIN;
-                }
-                break;
-            case CurrentCamera.LEFT:
 
-                if (Input.GetKeyDown(KeyCode.E))
-                {
-                    virtualCameraL.enabled = false;
-                    virtualCameraMain.enabled = true;
-                    currentCamera = CurrentCamera.MAIN;
-                }
-                break;
+                    break;
+                case CurrentCamera.RIGHT:
+
+                    if (Input.GetKeyDown(KeyCode.Q))
+                    {
+                        virtualCameraR.enabled = false;
+                        virtualCameraMain.enabled = true;
+                        currentCamera = CurrentCamera.MAIN;
+                    }
+                    break;
+                case CurrentCamera.LEFT:
+
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+                        virtualCameraL.enabled = false;
+                        virtualCameraMain.enabled = true;
+                        currentCamera = CurrentCamera.MAIN;
+                    }
+                    break;
+            }
+
+
+
+            if (virtualCameraL.enabled)
+            {
+                PlayerController.Instance.transform.rotation = Quaternion.Euler(0, 90, -90);
+            }
+            else if (virtualCameraR.enabled)
+            {
+                PlayerController.Instance.transform.rotation = Quaternion.Euler(0, -90, 90);
+            }
+            else
+            {
+                PlayerController.Instance.transform.rotation = Quaternion.identity;
+            }
         }
-
         
-
-        if (virtualCameraL.enabled)
-        {
-            PlayerController.Instance.transform.rotation = Quaternion.Euler(0, 90, -90);
-        }
-        else if (virtualCameraR.enabled)
-        {
-           PlayerController.Instance.transform.rotation = Quaternion.Euler(0, -90, 90);
-        }
-        else
-        {
-            PlayerController.Instance.transform.rotation = Quaternion.identity;
-        }
     }
 
 

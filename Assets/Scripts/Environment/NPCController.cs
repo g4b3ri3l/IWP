@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class NPCController : MonoBehaviour, Interactable
 {
     [SerializeField] private Dialogue dialogue;
     private bool isDialogueActive = false;
+    [SerializeField] private TMP_FontAsset font;
 
 
     public void Interact()
@@ -13,7 +15,7 @@ public class NPCController : MonoBehaviour, Interactable
         if (!isDialogueActive)
         {
             isDialogueActive = true;
-            StartCoroutine(DialogueManager.Instance.ShowDialogue(dialogue));
+            StartCoroutine(DialogueManager.Instance.ShowDialogue(dialogue, font));
         }
     }
 

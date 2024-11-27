@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4245563258724479513}
   - component: {fileID: 6550466011590456140}
   - component: {fileID: 8104679890886800385}
+  - component: {fileID: 6286285383660664763}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -56,7 +57,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 8e048445335eeab438a9095d109ea8d0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -101,6 +102,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementSpeed: 4
+  movement: {x: 0, y: 0}
   animator: {fileID: 0}
   interactableLayer:
     serializedVersion: 2
@@ -189,3 +191,18 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: -0.34}
   m_Size: {x: 0.5, y: 0.35}
   m_Direction: 0
+--- !u!114 &6286285383660664763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5776773711931263416}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca723ce93ddfcc241ae71580158a9dab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveText: Press arrow keys to move
+  interactText: Press z to interact or continue
+  currentText: {fileID: 0}

@@ -20,8 +20,10 @@ public class DialogueManager : Singleton<DialogueManager>
     private bool isTyping;
     
 
-    public IEnumerator ShowDialogue(Dialogue dialogue)
+    public IEnumerator ShowDialogue(Dialogue dialogue, TMP_FontAsset font)
     {
+        dialogueText.font = font;
+
         yield return new WaitForEndOfFrame();
 
         OnShowDialogue?.Invoke();

@@ -21,7 +21,7 @@ public class PlayerController : Singleton<PlayerController>
 
     [Header("Dependencies")]
     private PlayerControls playerControls;
-    private Vector2 movement;
+    public Vector2 movement;
     private bool interacted;
     private Rigidbody2D rb;
     private Collider2D currentInteractable;
