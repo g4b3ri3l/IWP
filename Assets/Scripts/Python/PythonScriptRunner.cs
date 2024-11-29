@@ -7,7 +7,7 @@ using System;
 using System.IO;
 using IronPython.Modules;
 
-public class PythonConsole : MonoBehaviour
+public class PythonConsole : Singleton<PythonConsole>
 {
     public TMP_InputField inputField;  // Multi-line input for Python code
     public TMP_Text outputText;        // Text to display output or errors
@@ -52,6 +52,11 @@ public class PythonConsole : MonoBehaviour
             }
         }
        
+    }
+
+    public void SetText(string text)
+    {
+        inputField.text = text;
     }
 
     // Method to move player to a new position using Python

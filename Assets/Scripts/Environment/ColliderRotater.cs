@@ -1,7 +1,8 @@
-using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
-public class EnvironmentRotater : MonoBehaviour
+public class ColliderRotater : MonoBehaviour
 {
     [SerializeField] private float rotationDuration = 0.5f;
     [SerializeField] private AnimationCurve rotationCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
@@ -14,26 +15,26 @@ public class EnvironmentRotater : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.E))
             {
-                RotateEnvironment(true);
+                RotateColliders(true);
 
             }
             else if (Input.GetKeyDown(KeyCode.Q))
             {
-                RotateEnvironment(false);
+                RotateColliders(false);
             }
 
         }
     }
 
-    public void RotateEnvironment(bool clockwise)
+    public void RotateColliders(bool clockwise)
     {
         if (isRotating) return;
 
         float rotationAngle = clockwise ? 90f : -90f;
-        StartCoroutine(SmoothRotate(rotationAngle));
+        StartCoroutine(SmoothRotateColliders(rotationAngle));
     }
 
-    private IEnumerator SmoothRotate(float targetAngle)
+    private IEnumerator SmoothRotateColliders(float targetAngle)
     {
         isRotating = true;
         Quaternion startRotation = transform.rotation;
@@ -54,4 +55,7 @@ public class EnvironmentRotater : MonoBehaviour
         transform.rotation = targetRotation;
         isRotating = false;
     }
+
+
+
 }
