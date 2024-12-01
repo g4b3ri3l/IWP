@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -16,7 +18,15 @@ public class GameController : Singleton<GameController>
     public GameState state;
 
     private void Start()
+
     {
+        AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
+        {
+            var assemblyName = new AssemblyName(args.Name);
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, $"{assemblyName.Name}.dll");
+            return File.Exists(path) ? Assembly.LoadFrom(path) : null;
+        };
+
         DialogueManager.Instance.OnShowDialogue += () =>
         {
             state = GameState.Dialogue;
